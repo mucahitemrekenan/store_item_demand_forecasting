@@ -1,0 +1,24 @@
+# Core Libraries
+pandas
+numpy
+scipy
+
+# Time Series
+statsmodels
+
+# Machine Learning
+scikit-learn
+lightgbm
+xgboost
+
+# Visualization
+matplotlib
+seaborn
+plotly
+
+# Application
+streamlit
+
+# Utilities
+joblib # For saving/loading models
+tqdm # Progress bars 
