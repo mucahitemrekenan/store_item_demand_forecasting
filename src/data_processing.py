@@ -5,62 +5,12 @@ Module for loading and basic preprocessing of the store item demand data.
 import pandas as pd
 import os
 import logging
+from src import config
+from src.utils import load_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
-def load_data(data_path: str) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Loads the train and test datasets from the specified path.
-
-    Args:
-        data_path: The path to the directory containing train.csv and test.csv.
-
-    Returns:
-        A tuple containing the train and test pandas DataFrames.
-        Returns (None, None) if files are not found.
-    """
-    train_file = os.path.join(data_path, 'train.csv')
-    test_file = os.path.join(data_path, 'test.csv')
-
-    if not os.path.exists(train_file):
-        logging.error(f"Train file not found at {train_file}")
-        return None, None
-    if not os.path.exists(test_file):
-        logging.error(f"Test file not found at {test_file}")
-        return None, None
-
-    try:
-        logging.info(f"Loading train data from {train_file}...")
-        train_df = pd.read_csv(train_file, parse_dates=['date'])
-        logging.info(f"Train data loaded successfully. Shape: {train_df.shape}")
-
-        logging.info(f"Loading test data from {test_file}...")
-        test_df = pd.read_csv(test_file, parse_dates=['date'])
-        logging.info(f"Test data loaded successfully. Shape: {test_df.shape}")
-
-        # Basic Validation
-        if 'date' not in train_df.columns or 'store' not in train_df.columns or \
-           'item' not in train_df.columns or 'sales' not in train_df.columns:
-            logging.error("Train data missing required columns (date, store, item, sales).")
-            return None, None
-        if 'date' not in test_df.columns or 'store' not in test_df.columns or \
-           'item' not in test_df.columns or 'id' not in test_df.columns:
-             logging.error("Test data missing required columns (date, store, item, id).")
-             return None, None
-
-        # Convert Store and Item to category type for efficiency
-        # train_df['store'] = train_df['store'].astype('category')
-        # train_df['item'] = train_df['item'].astype('category')
-        # test_df['store'] = test_df['store'].astype('category')
-        # test_df['item'] = test_df['item'].astype('category')
-        # Note: Consider if this is beneficial later depending on feature engineering
-
-        return train_df, test_df
-
-    except Exception as e:
-        logging.error(f"Error loading data: {e}")
-        return None, None
 
 def prepare_data(df: pd.DataFrame, set_index: bool = True) -> pd.DataFrame:
     """Performs basic data preparation.
@@ -100,7 +50,8 @@ if __name__ == '__main__':
     if not os.path.exists(data_dir):
         data_dir = 'data' # Try relative to current dir if ../data doesn't exist
 
-    train_data, test_data = load_data(data_dir)
+    train_data = load_data(config.RAW_DATA_DIR, config.TRAIN_FILENAME, config.RAW_TRAIN_COLS)
+    test_data = load_data(config.RAW_DATA_DIR, config.TEST_FILENAME, config.RAW_TEST_COLS)
 
     if train_data is not None and test_data is not None:
         logging.info("Data loaded successfully.")

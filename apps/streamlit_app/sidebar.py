@@ -10,13 +10,13 @@ import logging
 try:
     from src.modeling import run_training_pipeline
     # Import helpers from the new utils module within the same package
-    from src.utils import load_raw_data, load_model
+    from src.utils import load_data, load_model
 except ImportError as e:
     st.sidebar.error(f"Sidebar Error: Could not import necessary functions: {e}")
     # Define dummies if needed, although sidebar might be non-functional
     def run_training_pipeline(*args, **kwargs): return None, None
-    def load_raw_data(*args, **kwargs): 
-        st.warning("Dummy load_raw_data used in sidebar.")
+    def load_data(*args, **kwargs): 
+        st.warning("Dummy load_data used in sidebar.")
         return None
     def load_model(*args, **kwargs): 
         st.warning("Dummy load_model used in sidebar.")
@@ -58,9 +58,9 @@ def render_sidebar(RAW_DATA_DIR, MODELS_DIR, initial_forecast_horizon, train_df)
                     os.makedirs(RAW_DATA_DIR, exist_ok=True)
                     new_data_df.to_csv(RAW_DATA_DIR, index=False)
                     st.sidebar.success(f"Data saved to {RAW_DATA_DIR}!")
-                    # Check if the imported load_raw_data has the clear method
-                    if hasattr(load_raw_data, 'clear'):
-                         load_raw_data.clear() # Clear cache
+                    # Check if the imported load_data has the clear method
+                    if hasattr(load_data, 'clear'):
+                         load_data.clear() # Clear cache
                     st.experimental_rerun() # Rerun to use new data
                 else:
                     st.sidebar.error("Upload failed: 'sales' not numeric.")

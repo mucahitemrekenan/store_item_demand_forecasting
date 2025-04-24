@@ -17,10 +17,11 @@ from sklearn.model_selection import RandomizedSearchCV
 from datetime import datetime # Import datetime
 
 # Import from sibling modules
-from src.data_processing import load_data, prepare_data
+from src.data_processing import prepare_data
 from src.feature_engineering import create_date_features, create_lag_features, create_rolling_features
 # Import configurations
 from src import config
+from src.utils import load_data
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -131,7 +132,8 @@ def run_training_pipeline(data_path: str = config.RAW_DATA_DIR, # Use config
     # 1. Load Data
     logging.info("--- Starting Training Pipeline ---")
     # Adjust load_data call if it needs specific filenames from config
-    train_df_raw, test_df_raw = load_data(data_path, train_file=config.TRAIN_FILENAME, test_file=config.TEST_FILENAME)
+    train_df_raw = load_data(config.RAW_DATA_DIR, config.TRAIN_FILENAME, config.RAW_TRAIN_COLS)
+
     if train_df_raw is None:
         logging.error("Failed to load data. Exiting pipeline.")
         return None, None

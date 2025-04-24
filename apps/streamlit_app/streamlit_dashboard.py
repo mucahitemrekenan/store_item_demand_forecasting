@@ -27,7 +27,7 @@ try:
     from apps.streamlit_app.model_info_tab import render_model_info_tab
     from apps.streamlit_app.forecast_tab import render_forecast_tab
     from apps.streamlit_app.sidebar import render_sidebar
-    from src.utils import load_raw_data, load_model
+    from src.utils import load_data
 
 except ImportError as e:
     st.error(f"Fatal Error: Could not import necessary modules: {e}. "
@@ -39,9 +39,6 @@ except ImportError as e:
 # Configure logging 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# --- Removed Helper Functions (Moved to utils.py) --- 
-# load_raw_data and load_model are now in apps/streamlit_app/utils.py
-
 # --- Main Application Logic ---
 def main():
     # --- Streamlit App Layout ---
@@ -51,7 +48,7 @@ def main():
 
     # --- Load Base Data --- 
     # Use config for data directory
-    train_df = load_raw_data(config.RAW_DATA_DIR, config.TRAIN_FILENAME)
+    train_df = load_data(config.RAW_DATA_DIR, config.TRAIN_FILENAME, config.RAW_TRAIN_COLS)
     if train_df is None:
         st.error(f"Failed to load training data from {os.path.join(config.RAW_DATA_DIR, config.TRAIN_FILENAME)}. Please check the path and file.")
         st.stop()

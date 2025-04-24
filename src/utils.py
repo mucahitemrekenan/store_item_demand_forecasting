@@ -5,25 +5,42 @@ import joblib
 import os
 import logging
 
-@st.cache_data # Keep caching for raw data loading
-def load_raw_data(data_dir: str, train_filename: str):
-    """Loads the raw training data from train.csv."""
-    train_file = os.path.join(data_dir, train_filename)
+
+@st.cache_data
+def load_data(data_dir: str, file_name: str, cols_to_check: list[str]) -> pd.DataFrame:
+    """Loads the dataset from the specified path.
+
+    Args:
+        data_dir: The path to the directory containing csv file.
+
+    Returns:
+        DataFrame
+        Returns None if files are not found.
+    """
+    file_name = os.path.join(data_dir, file_name)
+
+    if not os.path.exists(file_name):
+        logging.error(f"File not found at {file_name}")
+        return None
+
     try:
-        if not os.path.exists(train_file):
-             st.error(f"Training data file not found at {train_file}.")
-             return None
-        train_df = pd.read_csv(train_file, parse_dates=['date'])
-        if 'date' not in train_df.columns or not pd.api.types.is_datetime64_any_dtype(train_df['date']):
-            st.error("Invalid 'date' column in training data.")
+        logging.info(f"Loading data from {file_name}...")
+        df = pd.read_csv(file_name, parse_dates=['date'])
+        logging.info(f"Data loaded successfully. Shape: {df.shape}")
+        # Basic Validation
+        if not all(col in df.columns for col in cols_to_check):
+            logging.error("Data missing required columns: {cols_to_check}.")
             return None
-        return train_df
+        if 'date' not in df.columns or not pd.api.types.is_datetime64_any_dtype(df['date']):
+            st.error("Invalid 'date' column in data.")
+            return None
+        return df
     except FileNotFoundError:
-         st.error(f"Training data file not found: {train_file}")
+         st.error(f"Data file not found: {file_name}")
          return None
     except Exception as e:
         st.error(f"Error loading raw data: {e}")
-        logging.error(f"Error loading raw data from {train_file}: {e}")
+        logging.error(f"Error loading raw data {file_name}: {e}")
         return None
 
 @st.cache_data # Keep model loading cached here
@@ -41,3 +58,4 @@ def load_model(model_path: str):
     except Exception as e:
         logging.error(f"Error loading model from {model_path}: {e}")
         return None 
+

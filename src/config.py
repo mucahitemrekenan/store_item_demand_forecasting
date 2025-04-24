@@ -13,6 +13,10 @@ SAMPLE_SUBMISSION_FILENAME = 'sample_submission.csv'
 STORE_FILENAME = 'stores.csv' # Assuming store info might be relevant later
 ITEM_FILENAME = 'items.csv' # Assuming item info might be relevant later
 
+# Raw Data Columns
+RAW_TRAIN_COLS = ['date', 'store', 'item', 'sales']
+RAW_TEST_COLS = ['date', 'store', 'item', 'id']
+
 # --- Feature Engineering Configuration ---
 TARGET_COL = 'sales'
 GROUP_COLS = ['store', 'item'] # Columns to group by for lags/rolling features
