@@ -13,7 +13,7 @@ SAMPLE_SUBMISSION_FILENAME = 'sample_submission.csv'
 STORE_FILENAME = 'stores.csv' # Assuming store info might be relevant later
 ITEM_FILENAME = 'items.csv' # Assuming item info might be relevant later
 
-# Raw Data Columns
+# Raw Data Columns to check
 RAW_TRAIN_COLS = ['date', 'store', 'item', 'sales']
 RAW_TEST_COLS = ['date', 'store', 'item', 'id']
 

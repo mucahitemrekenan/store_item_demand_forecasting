@@ -6,21 +6,31 @@ This project aims to forecast the demand for items across different stores using
 
 ```
 .
-├── app/                # Streamlit application code
-│   └── main.py         # Main application script (to be created)
-├── data/               # Raw and processed data
-│   ├── train.csv
-│   ├── test.csv
-│   └── sample_submission.csv
+├── apps/               # Streamlit application code (if any)
+│   └── streamlit_app/  # Specific Streamlit app code
+│       ├── __init__.py
+│       ├── streamlit_dashboard.py
+│       ├── sidebar.py
+│       ├── forecast_tab.py
+│       ├── features_tab.py
+│       ├── model_info_tab.py
+│       └── eda_tab.py
+├── data/               # Raw and processed data (e.g., train.csv, test.csv)
+    ├── raw
+    └── processed
+├── models/             # Trained models
 ├── notebooks/          # Jupyter notebooks for EDA and experimentation
-│   └── eda.ipynb       # Exploratory Data Analysis (to be created)
-├── src/                # Source code for data processing, feature engineering, modeling
-│   ├── __init__.py
-│   ├── data_processing.py (to be created)
-│   ├── feature_engineering.py (to be created)
-│   └── modeling.py      (to be created)
-├── Dockerfile          # Docker configuration
+    └── eda_script.ipynb
 ├── requirements.txt    # Python dependencies
+├── run.py              # Main script to run pipelines (e.g., training, prediction)
+├── src/                # Source code for data processing, features, modeling, pipelines
+│   ├── __init__.py
+│   ├── config.py       # Configuration file for parameters and paths
+│   ├── data_processing.py
+│   ├── feature_engineering.py
+│   ├── modeling.py
+│   └── utils.py
+├── Dockerfile          # Docker configuration
 └── README.md           # Project overview
 ```
 
@@ -29,26 +39,36 @@ This project aims to forecast the demand for items across different stores using
 1.  **Clone the repository:**
     ```bash
     git clone <repository-url>
-    cd store_item_demand_forecasting_cursor
+    cd store_item_demand_forecasting # Or your project directory name
     ```
 
-2.  **Install dependencies:**
+2.  **Create a virtual environment (optional but recommended):**
+    ```bash
+    python -m venv .venv
+    source .venv/bin/activate # On Windows use `.venv\\Scripts\\activate`
+    ```
+
+3.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
 
-3.  **(Optional) Build and run with Docker:**
+4.  **(Optional) Build and run with Docker:**
     ```bash
     docker build -t store-demand-forecasting .
-    docker run -p 8501:8501 store-demand-forecasting
+    # Add appropriate volume mounts if needed for data/models
+    docker container run -p 8501:8501 store-demand-forecasting  # Or run a specific command
     ```
 
 ## Usage
 
-1.  **Run EDA notebook:** Navigate to the `notebooks` directory and run `jupyter notebook eda.ipynb`.
-2.  **Train models:** (Details on running training scripts TBD)
-3.  **Run Streamlit app:**
+1.  **Configure model and feature engineering parameters:** Modify `src/config.py` as needed.
+2.  **Run pipelines:** Execute the main script `run.py`. Be aware that you run the command in the project root.
+    Example:
     ```bash
-    streamlit run app/main.py
+    @root_path_of_the_project> streamlit run run.py
     ```
-    Or access via Docker at `http://localhost:8501`. 
+3.  **Explore notebooks:** Navigate to the `notebooks` directory and run Jupyter notebooks for analysis.
+    ```bash
+    jupyter notebook
+    ```
