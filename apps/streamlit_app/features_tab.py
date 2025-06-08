@@ -6,6 +6,7 @@ def render_features_tab(historical_data, lag_feature_names, rolling_feature_name
     """Renders the Features tab content."""
     with st.container():
         st.subheader("Feature Engineering Preview")
+        st.divider()
         if historical_data.empty:
             st.warning("No historical data to generate features from.")
         else:

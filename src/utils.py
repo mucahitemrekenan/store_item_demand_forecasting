@@ -59,3 +59,17 @@ def load_model(model_path: str):
         logging.error(f"Error loading model from {model_path}: {e}")
         return None 
 
+
+def detect_outliers_iqr(data: pd.Series) -> tuple[pd.Series, float, float]:
+    """Detect outliers using IQR method.
+    
+    Returns:
+        Tuple of (boolean mask of outliers, lower bound, upper bound)
+    """
+    Q1 = data.quantile(0.25)
+    Q3 = data.quantile(0.75)
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    outlier_mask = (data < lower_bound) | (data > upper_bound)
+    return outlier_mask, lower_bound, upper_bound

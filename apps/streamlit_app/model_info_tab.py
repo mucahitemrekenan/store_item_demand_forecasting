@@ -7,6 +7,7 @@ def render_model_info_tab(model):
     """Renders the Model Info tab content."""
     with st.container():
         st.subheader("Model Information")
+        st.divider()
         if model is None:
              st.warning("No model selected or loaded. Cannot display model information.")
         else:

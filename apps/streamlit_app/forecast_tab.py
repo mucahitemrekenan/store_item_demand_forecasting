@@ -19,7 +19,7 @@ def render_forecast_tab(model, historical_data, selected_store, selected_item, F
     """Renders the Forecast tab content."""
     with st.container():
         st.subheader("Sales Forecast")
-        
+        st.divider()
         if model is None:
             st.warning("Please select and load a model before generating forecasts.")
         elif historical_data.empty:

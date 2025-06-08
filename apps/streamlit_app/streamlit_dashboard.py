@@ -163,6 +163,7 @@ def main():
         horizontal=True,
         label_visibility="collapsed"
     )
+    st.divider()
     active_view = st.session_state.main_tabs_radio
     
     if active_view == "EDA":
