@@ -6,114 +6,13 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import numpy as np
 import scipy.stats as stats
-from scipy import signal
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
 import warnings
 warnings.filterwarnings('ignore')
 
-from src.utils import detect_outliers_iqr
+from src.utils import detect_outliers_iqr, perform_seasonality_decomposition, perform_stationarity_tests, calculate_advanced_statistics
 # Assuming DATE_FEATURES is imported where this function is called or passed implicitly
 # For standalone execution or testing, you might need to define/import it here.
-
-
-def perform_stationarity_tests(data):
-    """Perform stationarity tests on time series data."""
-    try:
-        from statsmodels.tsa.stattools import adfuller, kpss
-        
-        # Remove NaN values
-        clean_data = data.dropna()
-        
-        if len(clean_data) < 10:
-            return None, None
-        
-        # ADF Test
-        adf_result = adfuller(clean_data)
-        adf_stats = {
-            'test_statistic': adf_result[0],
-            'p_value': adf_result[1],
-            'critical_values': adf_result[4],
-            'is_stationary': adf_result[1] < 0.05
-        }
-        
-        # KPSS Test
-        kpss_result = kpss(clean_data, regression='c')
-        kpss_stats = {
-            'test_statistic': kpss_result[0],
-            'p_value': kpss_result[1],
-            'critical_values': kpss_result[3],
-            'is_stationary': kpss_result[1] > 0.05
-        }
-        
-        return adf_stats, kpss_stats
-    except ImportError:
-        st.warning("statsmodels not installed. Stationarity tests unavailable.")
-        return None, None
-    except Exception as e:
-        st.warning(f"Error in stationarity tests: {e}")
-        return None, None
-
-
-def perform_seasonality_decomposition(data, date_col):
-    """Perform seasonal decomposition of time series."""
-    try:
-        from statsmodels.tsa.seasonal import seasonal_decompose
-        
-        # Prepare data
-        ts_data = data.set_index(date_col).asfreq('D')
-        ts_data = ts_data.interpolate()
-        
-        if len(ts_data) < 14:
-            return None
-        
-        # Perform decomposition
-        decomposition = seasonal_decompose(ts_data, model='additive', period=7)
-        
-        return {
-            'original': decomposition.observed,
-            'trend': decomposition.trend,
-            'seasonal': decomposition.seasonal,
-            'residual': decomposition.resid
-        }
-    except ImportError:
-        st.warning("statsmodels not installed. Seasonality decomposition unavailable.")
-        return None
-    except Exception as e:
-        st.warning(f"Error in seasonality decomposition: {e}")
-        return None
-
-
-def calculate_advanced_statistics(data):
-    """Calculate advanced statistical measures."""
-    stats_dict = {}
-    
-    # Basic statistics
-    stats_dict['mean'] = data.mean()
-    stats_dict['median'] = data.median()
-    stats_dict['std'] = data.std()
-    stats_dict['variance'] = data.var()
-    stats_dict['skewness'] = stats.skew(data.dropna())
-    stats_dict['kurtosis'] = stats.kurtosis(data.dropna())
-    
-    # Distribution tests
-    try:
-        shapiro_stat, shapiro_p = stats.shapiro(data.dropna()[:5000])  # Limit for large datasets
-        stats_dict['shapiro_stat'] = shapiro_stat
-        stats_dict['shapiro_p'] = shapiro_p
-        stats_dict['is_normal'] = shapiro_p > 0.05
-    except:
-        stats_dict['shapiro_stat'] = np.nan
-        stats_dict['shapiro_p'] = np.nan
-        stats_dict['is_normal'] = False
-    
-    # Percentiles
-    percentiles = [5, 10, 25, 50, 75, 90, 95]
-    for p in percentiles:
-        stats_dict[f'p{p}'] = np.percentile(data.dropna(), p)
-    
-    return stats_dict
 
 
 def render_eda_tab(historical_data, eda_feature_options, lag_feature_names):
